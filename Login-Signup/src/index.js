@@ -7,10 +7,8 @@ const LogInCollection = require("./mongo")
 
 const port =  3000
 
-// Middleware to parse JSON data
 app.use(express.json())
 
-// Middleware to parse URL-encoded data
 app.use(express.urlencoded({ extended: false }))
 
 // Setting up paths for templates and static files
@@ -22,24 +20,21 @@ console.log(publicPath);
 app.set("view engine", "hbs");
 app.set("views", templatePath);
 
-// Serving static files from the public directory
 app.use(express.static(publicPath));
 
-// Route for the signup page (GET request)
 app.get("/signup", (req, res) => {
   res.render("signup");
 });
 
-// Route for the home page (GET request)
+
 app.get("/", (req, res) => {
   res.render("login");
 });
 
-// Route for submitting the signup form (POST request)
 app.post("/signup", async (req, res) => {
   const { name, password } = req.body;
 
-  // Validate username
+ 
   if (!name.match(/^[a-zA-Z0-9]{6,12}$/)) {
     return res
       .status(400)
@@ -48,7 +43,7 @@ app.post("/signup", async (req, res) => {
       );
   }
 
-  // Validate password
+ 
   if (!password.match(/^[a-zA-Z0-9!@#$%^&*]{6,}$/)) {
     return res
       .status(400)
@@ -58,7 +53,7 @@ app.post("/signup", async (req, res) => {
   }
 
   try {
-    // Checking if the username already exists in the database
+   
     const existingUser = await LogInCollection.findOne({ name });
 
     if (existingUser) {
@@ -74,19 +69,19 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// Route for submitting the login form (POST request)
+
 app.post("/login", async (req, res) => {
   const { name, password } = req.body;
 
   try {
-    // Checking if the username exists in the database
+    
     const user = await LogInCollection.findOne({ name });
 
     if (!user) {
       return res.status(404).send("User not found.");
     }
 
-    // Check password
+    
     if (user.password === password) {
       return res.status(200).send("Login successful!");
     } else {
